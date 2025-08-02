@@ -1,12 +1,11 @@
 class Solution:
-    def generate(self, numRows: int) -> List[List[int]]:
-        if numRows == 0:
-            return []
-        if numRows == 1:
-            return [[1]]
-        previousRows = self.generate(numRows - 1)
-        newRow = [1] * numRows
-        for i in range(1, numRows - 1):
-            newRow[i] = previousRows[-1][i - 1] + previousRows[-1][i]
-        previousRows.append(newRow)
-        return previousRows
+    def generate(self, numRows):
+        triangle = [[1]]
+        for i in range(1, numRows):
+            prev = triangle[-1]
+            row = [1]
+            for j in range(1, i):
+                row.append(prev[j - 1] + prev[j])
+            row.append(1)
+            triangle.append(row)
+        return triangle
