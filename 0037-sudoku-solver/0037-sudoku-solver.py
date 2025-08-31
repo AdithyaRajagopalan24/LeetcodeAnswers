@@ -1,45 +1,44 @@
+from typing import List
+
 class Solution:
     def solveSudoku(self, board: List[List[str]]) -> None:
-        rows = [set() for _ in range(9)]
-        cols = [set() for _ in range(9)]
-        grids = [[set() for _ in range(3)] for _ in range(3)]
-        empty_cells = []
-        for i, row in enumerate(board):
-            for j, value in enumerate(row):
-                if value == ".":
-                    empty_cells.append((i, j))
-                else:
-                    rows[i].add(value)
-                    cols[j].add(value)
-                    grids[i//3][j//3].add(value)                     
-        empty_cells = [
-            (9 - len(rows[i] | cols[j] | grids[i//3][j//3]), i, j)
-            for i, j in empty_cells
-        ]
-        heapq.heapify(empty_cells)
-        def fill_board():
-            if not empty_cells: 
-                return True
-            _, i, j = heapq.heappop(empty_cells)
-            row = rows[i]
-            col = cols[j]
-            grid = grids[i//3][j//3]
-            potential_nums = 0  
-            for value in '123456789':
-                if (value in row or value in col or value in grid): 
-                    continue
-                board[i][j] = value
-                row.add(value)
-                col.add(value)
-                grid.add(value)
+        row_mask = [0] * 9
+        col_mask = [0] * 9
+        box_mask = [0] * 9
+        empties = []
 
-                if fill_board():
-                    return True
-                row.remove(value)
-                col.remove(value)
-                grid.remove(value)
-                potential_nums += 1
-            heapq.heappush(empty_cells, (potential_nums, i, j))
+        def bit(d): return 1 << d
+
+        for r in range(9):
+            for c in range(9):
+                if board[r][c] == ".":
+                    empties.append((r, c))
+                else:
+                    d = int(board[r][c]) - 1
+                    row_mask[r] |= bit(d)
+                    col_mask[c] |= bit(d)
+                    box_mask[(r // 3) * 3 + c // 3] |= bit(d)
+
+        def backtrack():
+            if not empties:
+                return True
+            empties.sort(key=lambda x: bin(~(row_mask[x[0]] | col_mask[x[1]] | box_mask[(x[0]//3)*3+x[1]//3]) & 0x1FF).count("1"))
+            r, c = empties.pop(0)
+            b = (r // 3) * 3 + c // 3
+            used = row_mask[r] | col_mask[c] | box_mask[b]
+            for d in range(9):
+                if not (used & bit(d)):
+                    board[r][c] = str(d + 1)
+                    row_mask[r] |= bit(d)
+                    col_mask[c] |= bit(d)
+                    box_mask[b] |= bit(d)
+                    if backtrack():
+                        return True
+                    board[r][c] = "."
+                    row_mask[r] ^= bit(d)
+                    col_mask[c] ^= bit(d)
+                    box_mask[b] ^= bit(d)
+            empties.insert(0, (r, c))
             return False
-            
-        fill_board()
+
+        backtrack()
