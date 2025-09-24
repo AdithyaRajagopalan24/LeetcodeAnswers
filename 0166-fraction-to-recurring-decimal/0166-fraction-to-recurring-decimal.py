@@ -1,28 +1,26 @@
 class Solution:
     def fractionToDecimal(self, numerator: int, denominator: int) -> str:
-        if numerator == 0: return "0"
-        negSign = "" if ((numerator < 0) == (denominator < 0)) else "-"
-        numerator, denominator = abs(numerator), abs(denominator)
-        intValue = str(numerator // denominator)
-        remainderIndex, startIndex, lastIndex, decimals, repeating = {}, 0, 0, [], False
-        if numerator % denominator == 0:
-            return negSign + intValue
-        while True:
-            decimals.append(numerator // denominator)
-            remainder = numerator % denominator
-            numerator = remainder * 10
-            if remainder == 0:
-                repeating = False
+        if numerator == 0:
+            return "0"
+        result = []
+        if (numerator < 0) ^ (denominator < 0):
+            result.append("-")
+        num = abs(numerator)
+        den = abs(denominator)
+        quotient, remainder = divmod(num, den)
+        result.append(str(quotient))
+        if remainder == 0:
+            return "".join(result)
+        result.append(".")
+        seen = {}
+        fraction = []
+        while remainder != 0:
+            if remainder in seen:
+                fraction.insert(seen[remainder], "(")
+                fraction.append(")")
                 break
-            if remainder in remainderIndex:
-                repeating = True
-                startIndex = remainderIndex[remainder]
-                break
-            remainderIndex[remainder] = lastIndex
-            lastIndex += 1
-        decimals = ''.join(list(map(str, decimals[1:])))
-        if not repeating:    
-            return negSign + intValue + "." + decimals
-        non_repeating_part = decimals[:startIndex]
-        repeating_part = decimals[startIndex:lastIndex]
-        return negSign + intValue + "." + non_repeating_part + f"({repeating_part})"
+            seen[remainder] = len(fraction)
+            remainder *= 10
+            fraction.append(str(remainder // den))
+            remainder %= den
+        return "".join(result + fraction)
