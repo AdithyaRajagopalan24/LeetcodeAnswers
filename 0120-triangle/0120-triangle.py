@@ -1,10 +1,7 @@
 class Solution:
-    def minimumTotal(self, triangle: List[List[int]]) -> int:
-        rows = len(triangle)
-        dp = triangle[-1][:]
-
-        for row in range(rows - 2, -1, -1):
-            for col in range(row + 1):
-                dp[col] = triangle[row][col] + min(dp[col], dp[col + 1])
-
+    def minimumTotal(self, mat: List[List[int]]) -> int:
+        dp = mat[-1][:]  
+        for i in range(len(mat) - 2, -1, -1):
+            for j in range(i + 1):
+                dp[j] = mat[i][j] + min(dp[j], dp[j + 1])
         return dp[0]
