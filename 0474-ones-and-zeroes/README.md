@@ -1,4 +1,4 @@
-<h2><a href="https://leetcode.com/problems/ones-and-zeroes/">474. Ones and Zeroes</a></h2><h3>Medium</h3><hr><p>You are given an array of binary strings <code>strs</code> and two integers <code>m</code> and <code>n</code>.</p>
+<h2><a href="https://leetcode.com/problems/ones-and-zeroes">474. Ones and Zeroes</a></h2><h3>Medium</h3><hr><p>You are given an array of binary strings <code>strs</code> and two integers <code>m</code> and <code>n</code>.</p>
 
 <p>Return <em>the size of the largest subset of <code>strs</code> such that there are <strong>at most</strong> </em><code>m</code><em> </em><code>0</code><em>&#39;s and </em><code>n</code><em> </em><code>1</code><em>&#39;s in the subset</em>.</p>
 
