@@ -4,10 +4,7 @@ class Solution(object):
         if n == 1:
             return nums[0]
 
-        return max(
-            self.robLinear(nums[:-1]),
-            self.robLinear(nums[1:])
-        )
+        return max(self.robLinear(nums[:-1]), self.robLinear(nums[1:]))
 
     def robLinear(self, nums):
         n = len(nums)
@@ -22,8 +19,7 @@ class Solution(object):
 
         for i in range(2, n):
             maxRobAtIndexDP[i] = max(
-                maxRobAtIndexDP[i - 2] + nums[i],
-                maxRobAtIndexDP[i - 1]
+                maxRobAtIndexDP[i - 2] + nums[i], maxRobAtIndexDP[i - 1]
             )
 
         return maxRobAtIndexDP[-1]
