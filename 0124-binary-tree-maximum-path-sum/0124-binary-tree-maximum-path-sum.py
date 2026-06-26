@@ -1,16 +1,18 @@
 class Solution:
     def maxPathSum(self, root: TreeNode) -> int:
-        self.bestSum = float("-inf")
+        self.ans = float("-inf")
 
-        def dfs(node):
-            if not node:
+        def solve(curr):
+            if curr is None:
                 return 0
 
-            leftGain = max(dfs(node.left), 0)
-            rightGain = max(dfs(node.right), 0)
-            pathSum = node.val + leftGain + rightGain
-            self.bestSum = max(self.bestSum, pathSum)
-            return node.val + max(leftGain, rightGain)
+            left = max(solve(curr.left), 0)
+            right = max(solve(curr.right), 0)
 
-        dfs(root)
-        return self.bestSum
+            total = curr.val + left + right
+            self.ans = max(self.ans, total)
+
+            return curr.val + max(left, right)
+
+        solve(root)
+        return self.ans
