@@ -1,35 +1,40 @@
 class Solution:
     def exist(self, board: List[List[str]], word: str) -> bool:
-        rowsCount = len(board)
-        columnsCount = len(board[0])
-        if len(word) > rowsCount*columnsCount:
-            return False
-        
-        count = Counter(sum(board, []))
-        
-        for c, countWord in Counter(word).items():
-            if count[c] < countWord:
-                return False
-            
-        if count[word[0]] > count[word[-1]]:
-             word = word[::-1]
-                        
-        checked = set()
-        
-        def searching(rows, columns, i):
-            if i == len(word):
-                return True
-            if rows < 0 or columns < 0 or rows >= rowsCount or columns >= columnsCount or word[i] != board[rows][columns] or (rows,columns) in checked:
-                return False
-            
-            checked.add((rows,columns))
-            res = (searching(rows+1,columns,i+1) or searching(rows-1,columns,i+1) or searching(rows,columns+1,i+1) or searching(rows,columns-1,i+1))
-            checked.remove((rows,columns))  #backtracking
+        rows = len(board)
+        cols = len(board[0])
 
-            return res
-        
-        for i in range(rowsCount):
-            for j in range(columnsCount):
-                if searching(i,j,0):
+        if len(word) > rows * cols:
+            return False
+
+        board_count = Counter(sum(board, []))
+        word_count = Counter(word)
+
+        for ch, needed in word_count.items():
+            if board_count[ch] < needed:
+                return False
+
+        if board_count[word[0]] > board_count[word[-1]]:
+            word = word[::-1]
+
+        visited = set()
+
+        def dfs(r, c, idx):
+            if idx == len(word):
+                return True
+
+            if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[idx] or (r, c) in visited:
+                return False
+
+            visited.add((r, c))
+
+            result = dfs(r + 1, c, idx + 1) or dfs(r - 1, c, idx + 1) or dfs(r, c + 1, idx + 1) or dfs(r, c - 1, idx + 1)
+
+            visited.remove((r, c))
+            return result
+
+        for r in range(rows):
+            for c in range(cols):
+                if dfs(r, c, 0):
                     return True
+
         return False
